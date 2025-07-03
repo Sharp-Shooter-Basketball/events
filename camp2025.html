@@ -57,12 +57,25 @@
             height: 120px;
             margin: 0 auto;
             background: rgba(255,255,255,0.1);
-            border-radius: 50%;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
             border: 3px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo .logo-placeholder {
+            color: white;
+            font-size: 18px;
+            text-align: center;
         }
 
         .header h1 {
@@ -268,16 +281,33 @@
             margin: 20px 0;
         }
 
-        .photo-placeholder {
+        .photo-item {
             height: 150px;
-            background: #f0f0f0;
             border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-placeholder {
+            height: 100%;
+            background: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #666;
             font-style: italic;
-            border: 2px dashed #ccc;
         }
 
         @media (max-width: 768px) {
@@ -292,6 +322,33 @@
             .form-container {
                 padding: 20px;
             }
+            
+            .photo-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            .form-section {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -300,9 +357,8 @@
         <div class="header">
             <div class="logo-container">
                 <div class="logo">
-                    <!-- Replace this with your actual logo -->
-                    <img src="logo.jpeg" alt="Sharp Shooter Basketball Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div style="display: none; color: white; font-size: 18px;">🏀 LOGO</div>
+                    <img src="logo.jpeg" alt="Sharp Shooter Basketball Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-placeholder" style="display: none;">🏀 LOGO</div>
                 </div>
             </div>
             <h1>Sharp Shooter Basketball</h1>
@@ -322,9 +378,18 @@
             </div>
 
             <div class="photo-gallery">
-                <div class="photo-placeholder">Camp Photo 1</div>
-                <div class="photo-placeholder">Camp Photo 2</div>
-                <div class="photo-placeholder">Training Photo</div>
+                <div class="photo-item">
+                    <img src="one.jpg" alt="Camp Photo 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display: none;">Camp Photo 1</div>
+                </div>
+                <div class="photo-item">
+                    <img src="two.jpeg" alt="Camp Photo 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display: none;">Camp Photo 2</div>
+                </div>
+                <div class="photo-item">
+                    <img src="three.jpeg" alt="Training Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display: none;">Training Photo</div>
+                </div>
             </div>
 
             <form id="registrationForm">
@@ -449,13 +514,6 @@
                 <button type="submit" class="submit-btn">
                     🏀 Register for Camp
                 </button>
-                
-                <!-- Debug Info (remove in production) -->
-                <!--<div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-family: monospace; font-size: 12px;">
-                    <strong>Debug Info:</strong><br>
-                    Status: <span id="debugStatus">Ready for testing</span><br>
-                    <button type="button" onclick="testFormData()" style="margin-top: 10px; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Test Form Data Collection</button>
-                </div>-->
             </form>
         </div>
     </div>
@@ -645,56 +703,6 @@
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         });
-
-        // Debug function to test form data collection
-        function testFormData() {
-            const form = document.getElementById('registrationForm');
-            const formData = new FormData(form);
-            const children = [];
-            
-            // Process children data
-            const childNames = formData.getAll('childName[]');
-            const childGenders = formData.getAll('childGender[]');
-            const childDobs = formData.getAll('childDob[]');
-            const childSchools = formData.getAll('childSchool[]');
-            const childExperiences = formData.getAll('childExperience[]');
-            
-            console.log('Raw form data:');
-            console.log('Child names:', childNames);
-            console.log('Child genders:', childGenders);
-            console.log('Child DOBs:', childDobs);
-            console.log('Child schools:', childSchools);
-            
-            for (let i = 0; i < childNames.length; i++) {
-                if (childNames[i].trim()) {
-                    children.push({
-                        name: childNames[i],
-                        gender: childGenders[i],
-                        dob: childDobs[i],
-                        school: childSchools[i],
-                        experience: childExperiences[i]
-                    });
-                }
-            }
-            
-            const data = {
-                parent1Name: formData.get('parent1Name'),
-                parent2Name: formData.get('parent2Name'),
-                phoneNumber: formData.get('phoneNumber'),
-                email: formData.get('email'),
-                emergencyContact: formData.get('emergencyContact'),
-                emergencyPhone: formData.get('emergencyPhone'),
-                medicalInfo: formData.get('medicalInfo'),
-                specialRequests: formData.get('specialRequests'),
-                photoConsent: formData.get('photoConsent') ? 'Yes' : 'No',
-                children: children
-            };
-            
-            console.log('Processed data:', data);
-            document.getElementById('debugStatus').textContent = 'Data logged to console - check browser developer tools';
-            
-            alert('Form data collected successfully!\n\nChildren found: ' + children.length + '\n\nCheck the browser console (F12) for detailed data.');
-        }
 
         // Phone number formatting
         document.getElementById('phoneNumber').addEventListener('input', function(e) {
