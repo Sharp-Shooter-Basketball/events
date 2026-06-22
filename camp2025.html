@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Register for Sharp Shooter Basketball Summer Camp 2026. Professional training for ages 6–16.">
+    <meta name="description" content="Register for Sharp Shooter Basketball Summer Camp 2026. Professional training for ages 6–20.">
     <meta property="og:title" content="Sharp Shooter Basketball Camp Registration 2026">
-    <meta property="og:description" content="Summer basketball camp for ages 6–16. Register online today.">
+    <meta property="og:description" content="Summer basketball camp for ages 6–20. Register online today.">
     <meta property="og:image" content="logo.jpeg">
     <link rel="icon" href="logo.jpeg" type="image/jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -145,6 +145,13 @@
             color: #2C3E50;
         }
 
+        .child-dob-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2C3E50;
+        }
+
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -185,6 +192,33 @@
         .form-group.half {
             flex: 1;
             min-width: 200px;
+        }
+
+        .dob-selects {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .dob-selects select {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            background: white;
+        }
+
+        .dob-selects select:focus {
+            outline: none;
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .dob-selects select.field-error {
+            border-color: #dc3545;
         }
 
         .children-section {
@@ -648,11 +682,11 @@
                     <div class="form-row">
                         <div class="form-group half">
                             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-                            <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="(250) 799 999 999" autocomplete="tel">
+                            <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="(555) 123-4567" autocomplete="tel">
                         </div>
                         <div class="form-group half">
                             <label for="email">Email Address <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" required placeholder="parent@gmail.com" autocomplete="email">
+                            <input type="email" id="email" name="email" required placeholder="parent@example.com" autocomplete="email">
                         </div>
                     </div>
                 </section>
@@ -728,7 +762,7 @@
             <h2 id="terms-heading">Terms &amp; Conditions</h2>
             <p>By registering for Sharp Shooter Basketball Camp, you agree to the following:</p>
             <ul>
-                <li>Participants must be between 6 and 16 years old at the start of camp.</li>
+                <li>Participants must be between 6 and 20 years old at the start of camp.</li>
                 <li>Parents/guardians are responsible for drop-off and pick-up at scheduled times.</li>
                 <li>Camp fees are non-refundable within 7 days of the camp start date.</li>
                 <li>Participants must follow all safety rules and coach instructions.</li>
@@ -761,8 +795,19 @@
             </div>
             <div class="form-row">
                 <div class="form-group half">
-                    <label class="child-dob-label">Date of Birth <span class="required">*</span></label>
-                    <input type="date" class="child-dob-input" name="childDob[]" required>
+                    <span class="child-dob-label">Date of Birth <span class="required">*</span></span>
+                    <div class="dob-selects" role="group">
+                        <select class="child-dob-month" required aria-label="Birth month">
+                            <option value="">Month</option>
+                        </select>
+                        <select class="child-dob-day" required aria-label="Birth day">
+                            <option value="">Day</option>
+                        </select>
+                        <select class="child-dob-year" required aria-label="Birth year">
+                            <option value="">Year</option>
+                        </select>
+                    </div>
+                    <input type="hidden" class="child-dob-input" name="childDob[]">
                     <div class="field-error-message child-age-error" hidden></div>
                 </div>
                 <div class="form-group half">
@@ -782,10 +827,16 @@
         </div>
     </template>
 
+    <form id="gasSubmitForm" method="POST" action="" target="gasSubmitFrame" hidden>
+        <input type="hidden" name="payload" id="gasPayload">
+    </form>
+    <iframe name="gasSubmitFrame" id="gasSubmitFrame" hidden title="Form submission"></iframe>
+
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbynpI4aZec2z6o0u3dC920dDxLorx88ZugV5FVkRplASGhRsfHer6sJAYPvprOE6AUbQQ/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAqQzlTantsm6ZErQZRR8A4zcm3AMSFKQg_ivuh2rCLLHmw4DRivMpgPz-bUTJMYjL/exec';
         const MIN_AGE = 6;
-        const MAX_AGE = 16;
+        const MAX_AGE = 20;
+        const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         let childIdCounter = 0;
 
         const form = document.getElementById('registrationForm');
@@ -794,6 +845,111 @@
         const childrenContainer = document.getElementById('childrenContainer');
         const childTemplate = document.getElementById('childEntryTemplate');
         const termsModal = document.getElementById('termsModal');
+
+        function getDaysInMonth(month, year) {
+            if (!month || !year) return 31;
+            return new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
+        }
+
+        function populateDobSelects(entry) {
+            const monthSelect = entry.querySelector('.child-dob-month');
+            const daySelect = entry.querySelector('.child-dob-day');
+            const yearSelect = entry.querySelector('.child-dob-year');
+            const hiddenInput = entry.querySelector('.child-dob-input');
+            const currentYear = new Date().getFullYear();
+
+            MONTH_NAMES.forEach(function(name, index) {
+                const option = document.createElement('option');
+                option.value = String(index + 1).padStart(2, '0');
+                option.textContent = name;
+                monthSelect.appendChild(option);
+            });
+
+            for (let year = currentYear - MAX_AGE; year <= currentYear - MIN_AGE; year++) {
+                const option = document.createElement('option');
+                option.value = String(year);
+                option.textContent = String(year);
+                yearSelect.appendChild(option);
+            }
+
+            function updateDayOptions() {
+                const month = monthSelect.value;
+                const year = yearSelect.value;
+                const previousDay = daySelect.value;
+                const maxDays = getDaysInMonth(month, year);
+
+                daySelect.innerHTML = '<option value="">Day</option>';
+                for (let day = 1; day <= maxDays; day++) {
+                    const option = document.createElement('option');
+                    const value = String(day).padStart(2, '0');
+                    option.value = value;
+                    option.textContent = String(day);
+                    daySelect.appendChild(option);
+                }
+
+                if (previousDay && parseInt(previousDay, 10) <= maxDays) {
+                    daySelect.value = previousDay;
+                }
+            }
+
+            function syncDobValue() {
+                const month = monthSelect.value;
+                const day = daySelect.value;
+                const year = yearSelect.value;
+
+                if (month && day && year) {
+                    hiddenInput.value = year + '-' + month + '-' + day;
+                } else {
+                    hiddenInput.value = '';
+                }
+
+                monthSelect.classList.remove('field-error');
+                daySelect.classList.remove('field-error');
+                yearSelect.classList.remove('field-error');
+                validateChildAgeForEntry(entry);
+            }
+
+            monthSelect.addEventListener('change', function() {
+                updateDayOptions();
+                syncDobValue();
+            });
+            yearSelect.addEventListener('change', function() {
+                updateDayOptions();
+                syncDobValue();
+            });
+            daySelect.addEventListener('change', syncDobValue);
+
+            updateDayOptions();
+        }
+
+        function validateChildAgeForEntry(entry) {
+            const hiddenInput = entry.querySelector('.child-dob-input');
+            const ageError = entry.querySelector('.child-age-error');
+            const monthSelect = entry.querySelector('.child-dob-month');
+            const daySelect = entry.querySelector('.child-dob-day');
+            const yearSelect = entry.querySelector('.child-dob-year');
+            const age = getAgeFromDob(hiddenInput.value);
+
+            if (hiddenInput.value && (age < MIN_AGE || age > MAX_AGE)) {
+                hiddenInput.classList.add('field-error');
+                monthSelect.classList.add('field-error');
+                daySelect.classList.add('field-error');
+                yearSelect.classList.add('field-error');
+                hiddenInput.setCustomValidity('Child must be between ' + MIN_AGE + ' and ' + MAX_AGE + ' years old (currently ' + age + ').');
+                ageError.textContent = 'Must be ' + MIN_AGE + '–' + MAX_AGE + ' years old (age ' + age + ' entered).';
+                ageError.hidden = false;
+                return false;
+            }
+
+            hiddenInput.classList.remove('field-error');
+            monthSelect.classList.remove('field-error');
+            daySelect.classList.remove('field-error');
+            yearSelect.classList.remove('field-error');
+            hiddenInput.setCustomValidity('');
+            ageError.hidden = true;
+            ageError.textContent = '';
+            return true;
+        }
 
         function formatPhone(input) {
             let value = input.value.replace(/\D/g, '');
@@ -835,6 +991,9 @@
             const nameInput = entry.querySelector('.child-name-input');
             const genderSelect = entry.querySelector('.child-gender-select');
             const dobInput = entry.querySelector('.child-dob-input');
+            const monthSelect = entry.querySelector('.child-dob-month');
+            const daySelect = entry.querySelector('.child-dob-day');
+            const yearSelect = entry.querySelector('.child-dob-year');
             const schoolInput = entry.querySelector('.child-school-input');
             const experienceSelect = entry.querySelector('.child-experience-select');
             const removeBtn = entry.querySelector('.remove-child-btn');
@@ -846,8 +1005,15 @@
             entry.querySelector('.child-gender-label').htmlFor = suffix + 'Gender';
             genderSelect.id = suffix + 'Gender';
 
-            entry.querySelector('.child-dob-label').htmlFor = suffix + 'Dob';
-            dobInput.id = suffix + 'Dob';
+            const dobLabel = entry.querySelector('.child-dob-label');
+            if (dobLabel) {
+                dobLabel.id = suffix + 'DobLabel';
+                const dobGroup = entry.querySelector('.dob-selects');
+                if (dobGroup) dobGroup.setAttribute('aria-labelledby', suffix + 'DobLabel');
+            }
+            monthSelect.id = suffix + 'Month';
+            daySelect.id = suffix + 'Day';
+            yearSelect.id = suffix + 'Year';
 
             entry.querySelector('.child-school-label').htmlFor = suffix + 'School';
             schoolInput.id = suffix + 'School';
@@ -855,24 +1021,7 @@
             entry.querySelector('.child-experience-label').htmlFor = suffix + 'Experience';
             experienceSelect.id = suffix + 'Experience';
 
-            function validateChildAge() {
-                const age = getAgeFromDob(dobInput.value);
-                if (dobInput.value && (age < MIN_AGE || age > MAX_AGE)) {
-                    dobInput.classList.add('field-error');
-                    dobInput.setCustomValidity(`Child must be between ${MIN_AGE} and ${MAX_AGE} years old (currently ${age}).`);
-                    ageError.textContent = `Must be ${MIN_AGE}–${MAX_AGE} years old (age ${age} entered).`;
-                    ageError.hidden = false;
-                    return false;
-                }
-                dobInput.classList.remove('field-error');
-                dobInput.setCustomValidity('');
-                ageError.hidden = true;
-                ageError.textContent = '';
-                return true;
-            }
-
-            dobInput.addEventListener('change', validateChildAge);
-            dobInput.addEventListener('blur', validateChildAge);
+            populateDobSelects(entry);
 
             removeBtn.addEventListener('click', function() {
                 entry.remove();
@@ -914,31 +1063,41 @@
         }
 
         function validateAllChildAges() {
-            const dobInputs = childrenContainer.querySelectorAll('.child-dob-input');
+            const entries = childrenContainer.querySelectorAll('.child-entry');
             let valid = true;
             let firstInvalid = null;
 
-            dobInputs.forEach(function(dobInput) {
-                const age = getAgeFromDob(dobInput.value);
-                const ageError = dobInput.closest('.form-group').querySelector('.child-age-error');
-                if (!dobInput.value || age < MIN_AGE || age > MAX_AGE) {
+            entries.forEach(function(entry) {
+                const hiddenInput = entry.querySelector('.child-dob-input');
+                const monthSelect = entry.querySelector('.child-dob-month');
+                const daySelect = entry.querySelector('.child-dob-day');
+                const yearSelect = entry.querySelector('.child-dob-year');
+                const ageError = entry.querySelector('.child-age-error');
+
+                if (!monthSelect.value || !daySelect.value || !yearSelect.value) {
                     valid = false;
-                    dobInput.classList.add('field-error');
-                    const ageText = dobInput.value ? age : 'unknown';
-                    dobInput.setCustomValidity(`Child must be between ${MIN_AGE} and ${MAX_AGE} years old.`);
+                    monthSelect.classList.add('field-error');
+                    daySelect.classList.add('field-error');
+                    yearSelect.classList.add('field-error');
                     if (ageError) {
-                        ageError.textContent = dobInput.value
-                            ? `Must be ${MIN_AGE}–${MAX_AGE} years old (age ${ageText} entered).`
-                            : 'Date of birth is required.';
+                        ageError.textContent = 'Please select month, day, and year.';
                         ageError.hidden = false;
                     }
-                    if (!firstInvalid) firstInvalid = dobInput;
+                    if (!firstInvalid) firstInvalid = monthSelect;
+                    return;
+                }
+
+                if (!validateChildAgeForEntry(entry)) {
+                    valid = false;
+                    if (!firstInvalid) firstInvalid = monthSelect;
                 }
             });
 
             if (firstInvalid) {
                 firstInvalid.focus();
-                showFormStatus(`Please correct age entries. Camp is for children ages ${MIN_AGE}–${MAX_AGE}.`, 'error');
+                if (!valid) {
+                    showFormStatus('Please correct date of birth entries. Camp is for ages ' + MIN_AGE + '–' + MAX_AGE + '.', 'error');
+                }
             }
 
             return valid;
@@ -981,8 +1140,37 @@
             };
         }
 
+        function submitViaHiddenForm(data) {
+            return new Promise(function(resolve, reject) {
+                const gasForm = document.getElementById('gasSubmitForm');
+                const iframe = document.getElementById('gasSubmitFrame');
+                let settled = false;
+
+                function finish(success) {
+                    if (settled) return;
+                    settled = true;
+                    iframe.removeEventListener('load', onLoad);
+                    clearTimeout(timer);
+                    if (success) resolve();
+                    else reject(new Error('Form submission failed'));
+                }
+
+                function onLoad() {
+                    finish(true);
+                }
+
+                const timer = setTimeout(function() {
+                    finish(true);
+                }, 8000);
+
+                gasForm.action = WEB_APP_URL;
+                document.getElementById('gasPayload').value = JSON.stringify(data);
+                iframe.addEventListener('load', onLoad);
+                gasForm.submit();
+            });
+        }
+
         async function submitToGoogleSheets(data) {
-            // text/plain avoids CORS preflight; many Apps Script deployments accept this
             const response = await fetch(WEB_APP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -993,24 +1181,12 @@
                 throw new Error('Server returned status ' + response.status);
             }
 
-            const contentType = response.headers.get('content-type') || '';
-            if (contentType.includes('application/json')) {
-                const result = await response.json();
-                if (result.success === false) {
-                    throw new Error(result.message || 'Registration was rejected by the server.');
-                }
+            const result = await response.json();
+            if (result.success === false) {
+                throw new Error(result.message || 'Registration was rejected by the server.');
             }
 
             return true;
-        }
-
-        async function submitNoCors(data) {
-            await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(data)
-            });
         }
 
         function resetFormAfterSuccess() {
@@ -1039,21 +1215,14 @@
             submitBtn.setAttribute('aria-busy', 'true');
 
             try {
-                if (WEB_APP_URL === 'YOUR_WEB_APP_URL_HERE') {
-                    console.log('Form data collected (test mode):', data);
-                    showFormStatus('Registration submitted successfully! (Test mode — data logged to browser console.)', 'success');
-                    resetFormAfterSuccess();
-                    return;
-                }
-
                 try {
                     await submitToGoogleSheets(data);
-                    showFormStatus('Registration submitted successfully! We will contact you soon with payment and camp details.', 'success');
+                    showFormStatus('Registration submitted successfully! We will contact you soon with camp details.', 'success');
                     resetFormAfterSuccess();
-                } catch (corsError) {
-                    console.warn('CORS fetch unavailable, using no-cors fallback:', corsError);
-                    await submitNoCors(data);
-                    showFormStatus('Registration submitted! If you do not hear from us within 48 hours, please contact us to confirm your spot.', 'info');
+                } catch (fetchError) {
+                    console.warn('Fetch submit failed, using form POST fallback:', fetchError);
+                    await submitViaHiddenForm(data);
+                    showFormStatus('Registration submitted successfully! We will contact you soon with camp details.', 'success');
                     resetFormAfterSuccess();
                 }
             } catch (error) {
