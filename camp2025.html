@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sharp Shooter Basketball Camp Registration</title>
+    <meta name="description" content="Register for Sharp Shooter Basketball Summer Camp 2026. Professional training for ages 6–16.">
+    <meta property="og:title" content="Sharp Shooter Basketball Camp Registration 2026">
+    <meta property="og:description" content="Summer basketball camp for ages 6–16. Register online today.">
+    <meta property="og:image" content="logo.jpeg">
+    <link rel="icon" href="logo.jpeg" type="image/jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Sharp Shooter Basketball Camp Registration 2026</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +20,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'DM Sans', 'Arial', sans-serif;
             background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
             min-height: 100vh;
             padding: 20px;
@@ -138,20 +146,40 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
+            font-family: inherit;
             transition: border-color 0.3s ease;
         }
 
+        .form-group textarea {
+            resize: vertical;
+        }
+
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: #FF6B35;
             box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .form-group input.field-error,
+        .form-group select.field-error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .field-error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 6px;
+            font-weight: 600;
         }
 
         .form-group.half {
@@ -176,7 +204,7 @@
             position: relative;
         }
 
-        .child-entry h4 {
+        .child-entry h3 {
             color: #2C3E50;
             margin-bottom: 15px;
             font-size: 1.1em;
@@ -190,6 +218,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            font-family: inherit;
             transition: background-color 0.3s ease;
             margin-top: 15px;
         }
@@ -206,13 +235,17 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 44px;
+            height: 44px;
             cursor: pointer;
-            font-size: 16px;
-            display: flex;
+            font-size: 20px;
+            display: none;
             align-items: center;
             justify-content: center;
+        }
+
+        .remove-child-btn.visible {
+            display: flex;
         }
 
         .remove-child-btn:hover {
@@ -227,14 +260,27 @@
             border-radius: 10px;
             font-size: 18px;
             font-weight: bold;
+            font-family: inherit;
             cursor: pointer;
             width: 100%;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .submit-btn:focus-visible,
+        .add-child-btn:focus-visible,
+        .remove-child-btn:focus-visible {
+            outline: 3px solid #2C3E50;
+            outline-offset: 2px;
         }
 
         .camp-info {
@@ -245,10 +291,38 @@
             border: 2px solid #28a745;
         }
 
-        .camp-info h3 {
+        .camp-info h2 {
             color: #2C3E50;
             margin-bottom: 15px;
             font-size: 1.2em;
+        }
+
+        .camp-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .camp-detail {
+            background: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .camp-detail strong {
+            display: block;
+            color: #2C3E50;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 4px;
+        }
+
+        .camp-detail span {
+            color: #34495E;
+            font-size: 1em;
         }
 
         .camp-info ul {
@@ -272,6 +346,112 @@
 
         .required {
             color: #dc3545;
+        }
+
+        .form-status {
+            display: none;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .form-status.visible {
+            display: block;
+        }
+
+        .form-status.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .form-status.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .form-status.info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .terms-link {
+            color: #FF6B35;
+            font-weight: bold;
+            text-decoration: underline;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+            font-size: inherit;
+            cursor: pointer;
+        }
+
+        .terms-link:hover {
+            color: #e55a2b;
+        }
+
+        .terms-dialog {
+            border: none;
+            border-radius: 15px;
+            padding: 0;
+            max-width: 600px;
+            width: calc(100% - 40px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .terms-dialog::backdrop {
+            background: rgba(0,0,0,0.5);
+        }
+
+        .terms-dialog-content {
+            padding: 30px;
+        }
+
+        .terms-dialog h2 {
+            color: #2C3E50;
+            margin-bottom: 16px;
+        }
+
+        .terms-dialog p,
+        .terms-dialog li {
+            color: #34495E;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .terms-dialog ul {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .terms-close-btn {
+            background: #2C3E50;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
         }
 
         .photo-gallery {
@@ -310,21 +490,58 @@
             font-style: italic;
         }
 
+        .site-footer {
+            text-align: center;
+            padding: 24px 40px 32px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            color: #2C3E50;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .site-footer a {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+
+        .privacy-note {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
             }
-            
+
             .header h1 {
                 font-size: 2em;
             }
-            
+
             .form-container {
                 padding: 20px;
             }
-            
+
             .photo-gallery {
                 grid-template-columns: 1fr;
+            }
+
+            .site-footer {
+                padding: 20px;
             }
         }
 
@@ -332,20 +549,20 @@
             .header {
                 padding: 20px;
             }
-            
+
             .logo {
                 width: 80px;
                 height: 80px;
             }
-            
+
             .header h1 {
                 font-size: 1.5em;
             }
-            
+
             .form-container {
                 padding: 15px;
             }
-            
+
             .form-section {
                 padding: 15px;
             }
@@ -354,7 +571,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <div class="logo-container">
                 <div class="logo">
                     <img src="logo.jpeg" alt="Sharp Shooter Basketball Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -362,256 +579,389 @@
                 </div>
             </div>
             <h1>Sharp Shooter Basketball</h1>
-            <p>Summer Camp Registration 2025</p>
-        </div>
+            <p>Summer Camp Registration 2026</p>
+        </header>
 
         <div class="form-container">
-            <div class="camp-info">
-                <h3>🏀 Camp Information</h3>
+            <section class="camp-info" aria-labelledby="camp-info-heading">
+                <h2 id="camp-info-heading">🏀 Camp Information</h2>
+
+                <div class="camp-details">
+                    <div class="camp-detail">
+                        <strong>Dates</strong>
+                        <span>July 7 – 11, 2026</span>
+                    </div>
+                    <div class="camp-detail">
+                        <strong>Time</strong>
+                        <span>9:00 AM – 3:00 PM daily</span>
+                    </div>
+                    <div class="camp-detail">
+                        <strong>Location</strong>
+                        <span>Community Center Gym — 123 Main St</span>
+                    </div>
+                    <div class="camp-detail">
+                        <strong>Cost</strong>
+                        <span>$199 per child (sibling discount available)</span>
+                    </div>
+                    <div class="camp-detail">
+                        <strong>Registration closes</strong>
+                        <span>June 30, 2026</span>
+                    </div>
+                    <div class="camp-detail">
+                        <strong>What to bring</strong>
+                        <span>Athletic shoes, water bottle, snack, sunscreen</span>
+                    </div>
+                </div>
+
                 <ul>
                     <li>Professional basketball training for all skill levels</li>
                     <li>Experienced coaches and fun activities</li>
-                    <li>Age groups: 6-16 years old</li>
+                    <li>Age groups: 6–16 years old</li>
                     <li>Safe and supportive environment</li>
                     <li>Equipment provided</li>
                 </ul>
-            </div>
+            </section>
 
             <div class="photo-gallery">
                 <div class="photo-item">
-                    <img src="one.jpeg" alt="Camp Photo 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="one.jpeg" alt="Camp Photo 1" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="photo-placeholder" style="display: none;">Camp Photo 1</div>
                 </div>
                 <div class="photo-item">
-                    <img src="two.jpeg" alt="Camp Photo 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="two.jpeg" alt="Camp Photo 2" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="photo-placeholder" style="display: none;">Camp Photo 2</div>
                 </div>
                 <div class="photo-item">
-                    <img src="three.jpeg" alt="Training Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="three.jpeg" alt="Training Photo" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="photo-placeholder" style="display: none;">Training Photo</div>
                 </div>
             </div>
 
-            <form id="registrationForm">
-                <div class="form-section">
-                    <div class="section-title">Parent Information</div>
-                    
+            <div id="formStatus" class="form-status" role="alert" aria-live="polite"></div>
+
+            <form id="registrationForm" novalidate>
+                <section class="form-section" aria-labelledby="parent-section-heading">
+                    <h2 class="section-title" id="parent-section-heading">Parent Information</h2>
+
                     <div class="form-row">
                         <div class="form-group half">
                             <label for="parent1Name">Parent 1 Name <span class="required">*</span></label>
-                            <input type="text" id="parent1Name" name="parent1Name" required placeholder="Enter first parent's full name">
+                            <input type="text" id="parent1Name" name="parent1Name" required placeholder="Enter first parent's full name" autocomplete="name">
                         </div>
                         <div class="form-group half">
                             <label for="parent2Name">Parent 2 Name</label>
-                            <input type="text" id="parent2Name" name="parent2Name" placeholder="Enter second parent's full name (optional)">
+                            <input type="text" id="parent2Name" name="parent2Name" placeholder="Enter second parent's full name (optional)" autocomplete="name">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group half">
                             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-                            <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="(555) 123-4567">
+                            <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="(555) 123-4567" autocomplete="tel">
                         </div>
                         <div class="form-group half">
                             <label for="email">Email Address <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" required placeholder="parent@example.com">
+                            <input type="email" id="email" name="email" required placeholder="parent@example.com" autocomplete="email">
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="form-section">
-                    <div class="section-title">Children Information</div>
-                    
+                <section class="form-section" aria-labelledby="children-section-heading">
+                    <h2 class="section-title" id="children-section-heading">Children Information</h2>
+
                     <div class="children-section">
-                        <div id="childrenContainer">
-                            <div class="child-entry">
-                                <h4>Child #1</h4>
-                                <div class="form-row">
-                                    <div class="form-group half">
-                                        <label>Child's Name <span class="required">*</span></label>
-                                        <input type="text" name="childName[]" required placeholder="Enter child's full name">
-                                    </div>
-                                    <div class="form-group half">
-                                        <label>Gender <span class="required">*</span></label>
-                                        <select name="childGender[]" required>
-                                            <option value="">Select gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                            <option value="other">Other</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group half">
-                                        <label>Date of Birth <span class="required">*</span></label>
-                                        <input type="date" name="childDob[]" required>
-                                    </div>
-                                    <div class="form-group half">
-                                        <label>School Name <span class="required">*</span></label>
-                                        <input type="text" name="childSchool[]" required placeholder="Enter school name">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Basketball Experience Level</label>
-                                    <select name="childExperience[]">
-                                        <option value="">Select experience level</option>
-                                        <option value="beginner">Beginner</option>
-                                        <option value="intermediate">Intermediate</option>
-                                        <option value="advanced">Advanced</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button type="button" class="add-child-btn" onclick="addChild()">
+                        <div id="childrenContainer"></div>
+
+                        <button type="button" class="add-child-btn" id="addChildBtn">
                             + Add Another Child
                         </button>
                     </div>
-                </div>
+                </section>
 
-                <div class="form-section">
-                    <div class="section-title">Additional Information</div>
-                    
+                <section class="form-section" aria-labelledby="additional-section-heading">
+                    <h2 class="section-title" id="additional-section-heading">Additional Information</h2>
+
                     <div class="form-group">
                         <label for="emergencyContact">Emergency Contact Name</label>
-                        <input type="text" id="emergencyContact" name="emergencyContact" placeholder="Emergency contact (if different from parent)">
+                        <input type="text" id="emergencyContact" name="emergencyContact" placeholder="Emergency contact (if different from parent)" autocomplete="name">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="emergencyPhone">Emergency Contact Phone</label>
-                        <input type="tel" id="emergencyPhone" name="emergencyPhone" placeholder="Emergency contact phone number">
+                        <input type="tel" id="emergencyPhone" name="emergencyPhone" placeholder="Emergency contact phone number" autocomplete="tel">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="medicalInfo">Medical Information / Allergies</label>
-                        <textarea id="medicalInfo" name="medicalInfo" rows="3" placeholder="Any medical conditions, allergies, or special needs we should know about" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: inherit; resize: vertical;"></textarea>
+                        <textarea id="medicalInfo" name="medicalInfo" rows="3" placeholder="Any medical conditions, allergies, or special needs we should know about"></textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="specialRequests">Special Requests / Comments</label>
-                        <textarea id="specialRequests" name="specialRequests" rows="3" placeholder="Any special requests or additional information" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: inherit; resize: vertical;"></textarea>
+                        <textarea id="specialRequests" name="specialRequests" rows="3" placeholder="Any special requests or additional information"></textarea>
                     </div>
-                </div>
+                </section>
 
-                <div class="form-section">
-                    <div class="section-title">Agreement & Consent</div>
-                    
+                <section class="form-section" aria-labelledby="consent-section-heading">
+                    <h2 class="section-title" id="consent-section-heading">Agreement &amp; Consent</h2>
+
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" name="consent" required style="margin-right: 10px;">
-                            I agree to the terms and conditions and give consent for my child(ren) to participate in Sharp Shooter Basketball Camp activities. <span class="required">*</span>
+                        <label class="checkbox-label" for="consent">
+                            <input type="checkbox" id="consent" name="consent" required>
+                            <span>I agree to the <button type="button" class="terms-link" id="openTermsBtn">terms and conditions</button> and give consent for my child(ren) to participate in Sharp Shooter Basketball Camp activities. <span class="required">*</span></span>
                         </label>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" name="photoConsent" style="margin-right: 10px;">
-                            I give permission for photos/videos of my child(ren) to be taken during camp activities for promotional purposes.
+                        <label class="checkbox-label" for="photoConsent">
+                            <input type="checkbox" id="photoConsent" name="photoConsent">
+                            <span>I give permission for photos/videos of my child(ren) to be taken during camp activities for promotional purposes.</span>
                         </label>
                     </div>
-                </div>
+                </section>
 
-                <button type="submit" class="submit-btn">
+                <button type="submit" class="submit-btn" id="submitBtn">
                     🏀 Register for Camp
                 </button>
             </form>
         </div>
+
+        <footer class="site-footer">
+            <p>Questions? Contact us at <a href="mailto:info@sharpshooterbasketball.com">info@sharpshooterbasketball.com</a> or call <a href="tel:+15551234567">(555) 123-4567</a>.</p>
+            <p class="privacy-note">Medical and contact information is stored securely and used only for camp administration.</p>
+        </footer>
     </div>
 
-    <script>
-        let childCount = 1;
+    <dialog class="terms-dialog" id="termsModal" aria-labelledby="terms-heading">
+        <div class="terms-dialog-content">
+            <h2 id="terms-heading">Terms &amp; Conditions</h2>
+            <p>By registering for Sharp Shooter Basketball Camp, you agree to the following:</p>
+            <ul>
+                <li>Participants must be between 6 and 16 years old at the start of camp.</li>
+                <li>Parents/guardians are responsible for drop-off and pick-up at scheduled times.</li>
+                <li>Camp fees are non-refundable within 7 days of the camp start date.</li>
+                <li>Participants must follow all safety rules and coach instructions.</li>
+                <li>Sharp Shooter Basketball is not liable for injuries beyond ordinary negligence.</li>
+                <li>Medical information provided will be kept confidential and shared only with camp staff as needed.</li>
+            </ul>
+            <p>Payment instructions will be sent via email after registration is confirmed.</p>
+            <button type="button" class="terms-close-btn" id="closeTermsBtn">Close</button>
+        </div>
+    </dialog>
 
-        function addChild() {
-            childCount++;
-            const container = document.getElementById('childrenContainer');
-            
-            const childEntry = document.createElement('div');
-            childEntry.className = 'child-entry';
-            childEntry.innerHTML = `
-                <button type="button" class="remove-child-btn" onclick="removeChild(this)">×</button>
-                <h4>Child #${childCount}</h4>
-                <div class="form-row">
-                    <div class="form-group half">
-                        <label>Child's Name <span class="required">*</span></label>
-                        <input type="text" name="childName[]" required placeholder="Enter child's full name">
-                    </div>
-                    <div class="form-group half">
-                        <label>Gender <span class="required">*</span></label>
-                        <select name="childGender[]" required>
-                            <option value="">Select gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
+    <template id="childEntryTemplate">
+        <div class="child-entry">
+            <button type="button" class="remove-child-btn" aria-label="Remove child">×</button>
+            <h3 class="child-heading">Child #1</h3>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label class="child-name-label">Child's Name <span class="required">*</span></label>
+                    <input type="text" class="child-name-input" name="childName[]" required placeholder="Enter child's full name" autocomplete="name">
                 </div>
-                <div class="form-row">
-                    <div class="form-group half">
-                        <label>Date of Birth <span class="required">*</span></label>
-                        <input type="date" name="childDob[]" required>
-                    </div>
-                    <div class="form-group half">
-                        <label>School Name <span class="required">*</span></label>
-                        <input type="text" name="childSchool[]" required placeholder="Enter school name">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Basketball Experience Level</label>
-                    <select name="childExperience[]">
-                        <option value="">Select experience level</option>
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
+                <div class="form-group half">
+                    <label class="child-gender-label">Gender <span class="required">*</span></label>
+                    <select class="child-gender-select" name="childGender[]" required>
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
                     </select>
                 </div>
-            `;
-            
-            container.appendChild(childEntry);
-            
-            // Smooth scroll to new child entry
-            childEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            </div>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label class="child-dob-label">Date of Birth <span class="required">*</span></label>
+                    <input type="date" class="child-dob-input" name="childDob[]" required>
+                    <div class="field-error-message child-age-error" hidden></div>
+                </div>
+                <div class="form-group half">
+                    <label class="child-school-label">School Name <span class="required">*</span></label>
+                    <input type="text" class="child-school-input" name="childSchool[]" required placeholder="Enter school name" autocomplete="organization">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="child-experience-label">Basketball Experience Level</label>
+                <select class="child-experience-select" name="childExperience[]">
+                    <option value="">Select experience level</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbynpI4aZec2z6o0u3dC920dDxLorx88ZugV5FVkRplASGhRsfHer6sJAYPvprOE6AUbQQ/exec';
+        const MIN_AGE = 6;
+        const MAX_AGE = 16;
+        let childIdCounter = 0;
+
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const formStatus = document.getElementById('formStatus');
+        const childrenContainer = document.getElementById('childrenContainer');
+        const childTemplate = document.getElementById('childEntryTemplate');
+        const termsModal = document.getElementById('termsModal');
+
+        function formatPhone(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 6) {
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{3})(\d{0,3})/, '($1) $2');
+            }
+            input.value = value;
         }
 
-        function removeChild(button) {
-            const childEntry = button.closest('.child-entry');
-            childEntry.remove();
-            
-            // Update child count and renumber
+        function getAgeFromDob(dobString) {
+            if (!dobString) return null;
+            const birth = new Date(dobString + 'T00:00:00');
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function showFormStatus(message, type) {
+            formStatus.textContent = message;
+            formStatus.className = 'form-status visible ' + type;
+            formStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function clearFormStatus() {
+            formStatus.textContent = '';
+            formStatus.className = 'form-status';
+        }
+
+        function wireChildEntry(entry) {
+            const id = ++childIdCounter;
+            const suffix = 'child' + id;
+
+            const nameInput = entry.querySelector('.child-name-input');
+            const genderSelect = entry.querySelector('.child-gender-select');
+            const dobInput = entry.querySelector('.child-dob-input');
+            const schoolInput = entry.querySelector('.child-school-input');
+            const experienceSelect = entry.querySelector('.child-experience-select');
+            const removeBtn = entry.querySelector('.remove-child-btn');
+            const ageError = entry.querySelector('.child-age-error');
+
+            entry.querySelector('.child-name-label').htmlFor = suffix + 'Name';
+            nameInput.id = suffix + 'Name';
+
+            entry.querySelector('.child-gender-label').htmlFor = suffix + 'Gender';
+            genderSelect.id = suffix + 'Gender';
+
+            entry.querySelector('.child-dob-label').htmlFor = suffix + 'Dob';
+            dobInput.id = suffix + 'Dob';
+
+            entry.querySelector('.child-school-label').htmlFor = suffix + 'School';
+            schoolInput.id = suffix + 'School';
+
+            entry.querySelector('.child-experience-label').htmlFor = suffix + 'Experience';
+            experienceSelect.id = suffix + 'Experience';
+
+            function validateChildAge() {
+                const age = getAgeFromDob(dobInput.value);
+                if (dobInput.value && (age < MIN_AGE || age > MAX_AGE)) {
+                    dobInput.classList.add('field-error');
+                    dobInput.setCustomValidity(`Child must be between ${MIN_AGE} and ${MAX_AGE} years old (currently ${age}).`);
+                    ageError.textContent = `Must be ${MIN_AGE}–${MAX_AGE} years old (age ${age} entered).`;
+                    ageError.hidden = false;
+                    return false;
+                }
+                dobInput.classList.remove('field-error');
+                dobInput.setCustomValidity('');
+                ageError.hidden = true;
+                ageError.textContent = '';
+                return true;
+            }
+
+            dobInput.addEventListener('change', validateChildAge);
+            dobInput.addEventListener('blur', validateChildAge);
+
+            removeBtn.addEventListener('click', function() {
+                entry.remove();
+                updateChildNumbers();
+            });
+        }
+
+        function createChildEntry() {
+            const entry = childTemplate.content.firstElementChild.cloneNode(true);
+            wireChildEntry(entry);
+            return entry;
+        }
+
+        function addChild() {
+            const entry = createChildEntry();
+            childrenContainer.appendChild(entry);
             updateChildNumbers();
+            entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            entry.querySelector('.child-name-input').focus();
         }
 
         function updateChildNumbers() {
-            const entries = document.querySelectorAll('.child-entry');
+            const entries = childrenContainer.querySelectorAll('.child-entry');
             entries.forEach((entry, index) => {
-                const heading = entry.querySelector('h4');
-                if (heading) {
-                    heading.textContent = `Child #${index + 1}`;
-                }
+                const heading = entry.querySelector('.child-heading');
+                const removeBtn = entry.querySelector('.remove-child-btn');
+                const childNum = index + 1;
+                heading.textContent = 'Child #' + childNum;
+                removeBtn.setAttribute('aria-label', 'Remove child ' + childNum);
+                removeBtn.classList.toggle('visible', entries.length > 1);
             });
-            childCount = entries.length;
         }
 
-        // Form submission handler
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            const submitBtn = document.querySelector('.submit-btn');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Submitting...';
-            submitBtn.disabled = true;
-            
-            // Collect form data
-            const formData = new FormData(this);
+        function resetChildrenToOne() {
+            childrenContainer.innerHTML = '';
+            childIdCounter = 0;
+            childrenContainer.appendChild(createChildEntry());
+            updateChildNumbers();
+        }
+
+        function validateAllChildAges() {
+            const dobInputs = childrenContainer.querySelectorAll('.child-dob-input');
+            let valid = true;
+            let firstInvalid = null;
+
+            dobInputs.forEach(function(dobInput) {
+                const age = getAgeFromDob(dobInput.value);
+                const ageError = dobInput.closest('.form-group').querySelector('.child-age-error');
+                if (!dobInput.value || age < MIN_AGE || age > MAX_AGE) {
+                    valid = false;
+                    dobInput.classList.add('field-error');
+                    const ageText = dobInput.value ? age : 'unknown';
+                    dobInput.setCustomValidity(`Child must be between ${MIN_AGE} and ${MAX_AGE} years old.`);
+                    if (ageError) {
+                        ageError.textContent = dobInput.value
+                            ? `Must be ${MIN_AGE}–${MAX_AGE} years old (age ${ageText} entered).`
+                            : 'Date of birth is required.';
+                        ageError.hidden = false;
+                    }
+                    if (!firstInvalid) firstInvalid = dobInput;
+                }
+            });
+
+            if (firstInvalid) {
+                firstInvalid.focus();
+                showFormStatus(`Please correct age entries. Camp is for children ages ${MIN_AGE}–${MAX_AGE}.`, 'error');
+            }
+
+            return valid;
+        }
+
+        function collectFormData() {
+            const formData = new FormData(form);
             const children = [];
-            
-            // Process children data
             const childNames = formData.getAll('childName[]');
             const childGenders = formData.getAll('childGender[]');
             const childDobs = formData.getAll('childDob[]');
             const childSchools = formData.getAll('childSchool[]');
             const childExperiences = formData.getAll('childExperience[]');
-            
+
             for (let i = 0; i < childNames.length; i++) {
                 if (childNames[i].trim()) {
                     children.push({
@@ -619,12 +969,13 @@
                         gender: childGenders[i],
                         dob: childDobs[i],
                         school: childSchools[i],
-                        experience: childExperiences[i]
+                        experience: childExperiences[i],
+                        age: getAgeFromDob(childDobs[i])
                     });
                 }
             }
-            
-            const data = {
+
+            return {
                 parent1Name: formData.get('parent1Name'),
                 parent2Name: formData.get('parent2Name'),
                 phoneNumber: formData.get('phoneNumber'),
@@ -634,97 +985,121 @@
                 medicalInfo: formData.get('medicalInfo'),
                 specialRequests: formData.get('specialRequests'),
                 photoConsent: formData.get('photoConsent') ? 'Yes' : 'No',
+                submittedAt: new Date().toISOString(),
                 children: children
             };
-            
-            // Replace 'YOUR_WEB_APP_URL_HERE' with your actual Google Apps Script URL
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbynpI4aZec2z6o0u3dC920dDxLorx88ZugV5FVkRplASGhRsfHer6sJAYPvprOE6AUbQQ/exec';
-            
-            if (webAppUrl === 'YOUR_WEB_APP_URL_HERE') {
-                // For testing without Google Apps Script
-                console.log('Form data collected:', data);
-                alert('✅ Registration submitted successfully!\n\n(Test mode - Data logged to console)\n\nTo connect to Google Sheets, replace YOUR_WEB_APP_URL_HERE with your Google Apps Script URL');
-                document.getElementById('registrationForm').reset();
-                
-                // Reset children to just one
-                const container = document.getElementById('childrenContainer');
-                const firstChild = container.querySelector('.child-entry');
-                container.innerHTML = '';
-                container.appendChild(firstChild);
-                
-                // Clear first child's data
-                firstChild.querySelectorAll('input, select').forEach(field => {
-                    field.value = '';
-                });
-                
-                childCount = 1;
-                updateChildNumbers();
-            } else {
-                // Send to Google Sheets
-                console.log('Attempting to send data to:', webAppUrl);
-                console.log('Data being sent:', data);
-                
-                fetch(webAppUrl, {
-                    method: 'POST',
-                    mode: 'no-cors', // This helps with CORS issues
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => {
-                    console.log('Response received:', response);
-                    // Note: with no-cors mode, we can't read the response
-                    // so we'll assume success if no error is thrown
-                    alert('✅ Registration submitted successfully! We will contact you soon with more details.');
-                    document.getElementById('registrationForm').reset();
-                    
-                    // Reset children to just one
-                    const container = document.getElementById('childrenContainer');
-                    const firstChild = container.querySelector('.child-entry');
-                    container.innerHTML = '';
-                    container.appendChild(firstChild);
-                    
-                    // Clear first child's data
-                    firstChild.querySelectorAll('input, select').forEach(field => {
-                        field.value = '';
-                    });
-                    
-                    childCount = 1;
-                    updateChildNumbers();
-                })
-                .catch(error => {
-                    console.error('Detailed error:', error);
-                    alert('❌ There was an error submitting your registration.\n\nError details: ' + error.message + '\n\nPlease check the console for more details and verify your Google Apps Script URL is correct.');
-                });
+        }
+
+        async function submitToGoogleSheets(data) {
+            // text/plain avoids CORS preflight; many Apps Script deployments accept this
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Server returned status ' + response.status);
             }
-            
-            // Restore button
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
+
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                const result = await response.json();
+                if (result.success === false) {
+                    throw new Error(result.message || 'Registration was rejected by the server.');
+                }
+            }
+
+            return true;
+        }
+
+        async function submitNoCors(data) {
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(data)
+            });
+        }
+
+        function resetFormAfterSuccess() {
+            form.reset();
+            resetChildrenToOne();
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearFormStatus();
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                showFormStatus('Please fill in all required fields before submitting.', 'error');
+                return;
+            }
+
+            if (!validateAllChildAges()) {
+                return;
+            }
+
+            const data = collectFormData();
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Submitting…';
+            submitBtn.disabled = true;
+            submitBtn.setAttribute('aria-busy', 'true');
+
+            try {
+                if (WEB_APP_URL === 'YOUR_WEB_APP_URL_HERE') {
+                    console.log('Form data collected (test mode):', data);
+                    showFormStatus('Registration submitted successfully! (Test mode — data logged to browser console.)', 'success');
+                    resetFormAfterSuccess();
+                    return;
+                }
+
+                try {
+                    await submitToGoogleSheets(data);
+                    showFormStatus('Registration submitted successfully! We will contact you soon with payment and camp details.', 'success');
+                    resetFormAfterSuccess();
+                } catch (corsError) {
+                    console.warn('CORS fetch unavailable, using no-cors fallback:', corsError);
+                    await submitNoCors(data);
+                    showFormStatus('Registration submitted! If you do not hear from us within 48 hours, please contact us to confirm your spot.', 'info');
+                    resetFormAfterSuccess();
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showFormStatus('There was an error submitting your registration. Please try again or contact us directly at (555) 123-4567.', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                submitBtn.removeAttribute('aria-busy');
+            }
         });
 
-        // Phone number formatting
         document.getElementById('phoneNumber').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 6) {
-                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-            } else if (value.length >= 3) {
-                value = value.replace(/(\d{3})(\d{0,3})/, '($1) $2');
-            }
-            e.target.value = value;
+            formatPhone(e.target);
         });
 
-        // Emergency phone formatting
         document.getElementById('emergencyPhone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 6) {
-                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-            } else if (value.length >= 3) {
-                value = value.replace(/(\d{3})(\d{0,3})/, '($1) $2');
-            }
-            e.target.value = value;
+            formatPhone(e.target);
         });
+
+        document.getElementById('addChildBtn').addEventListener('click', addChild);
+
+        document.getElementById('openTermsBtn').addEventListener('click', function() {
+            termsModal.showModal();
+        });
+
+        document.getElementById('closeTermsBtn').addEventListener('click', function() {
+            termsModal.close();
+        });
+
+        termsModal.addEventListener('click', function(e) {
+            if (e.target === termsModal) {
+                termsModal.close();
+            }
+        });
+
+        resetChildrenToOne();
     </script>
 </body>
 </html>
